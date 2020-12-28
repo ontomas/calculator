@@ -76,9 +76,16 @@
     }
 
     if (input === "Invert") {
-      let inverted = -operation.firstOperand;
-      operation.firstOperand = inverted.toString();
-      updateDisplay(operation.firstOperand);
+      let inverted;
+      if (operation.result) {
+        inverted = -operation.result;
+        operation.result = inverted.toString();
+        updateDisplay(operation.result);
+      } else {
+        inverted = -operation.firstOperand;
+        operation.firstOperand = inverted.toString();
+        updateDisplay(operation.firstOperand);
+      }
     }
 
     if (input === "Enter") {
@@ -185,6 +192,7 @@
       clearBtn.textContent = "C";
       updateDisplay(operation.secondOperand);
     }
+    console.table(operation);
   };
 
   buttonsGroup.addEventListener("click", (e) => init(e.target));
