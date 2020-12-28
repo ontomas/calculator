@@ -2,12 +2,10 @@
   const display = document.querySelector(".display");
   const buttonsGroup = document.querySelector(".buttons");
   const buttons = buttonsGroup.querySelectorAll("button");
-  const clearBtn = document.querySelector(
-    '.buttons button[data-input="clear"]'
-  );
+  const clearBtn = buttonsGroup.querySelector('button[data-input="Backspace"]');
 
   const operands = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
-  const operators = ["plus", "minus", "multiply", "divide"];
+  const operators = ["+", "-", "*", "/"];
 
   let operation = {
     firstOperand: "",
@@ -34,14 +32,14 @@
 
   const calculate = (firstOperand, operator, secondOperand) => {
     switch (operator) {
-      case "plus":
+      case "+":
         return +firstOperand + +secondOperand;
-      case "minus":
+      case "-":
         return +firstOperand - +secondOperand;
-      case "multiply":
+      case "*":
         let multiplication = +firstOperand * +secondOperand;
         return roundLonger(multiplication);
-      case "divide":
+      case "/":
         let duplication = +firstOperand / +secondOperand;
         return roundLonger(duplication);
     }
@@ -61,15 +59,15 @@
     display.textContent = input;
   };
 
-  buttonsGroup.addEventListener("click", (e) => {
-    const userInput = e.target.dataset.input;
+  const init = (e) => {
+    const input = e.dataset.input;
 
-    if (userInput === "percent") {
+    if (input === "%") {
       if (!operation.secondOperand) {
         operation.firstOperand = (+operation.firstOperand / 100).toString();
         updateDisplay(operation.firstOperand);
       } else {
-        operation.secondOperand = (
+        operation.result = (
           +operation.firstOperand -
           (+operation.firstOperand * +operation.secondOperand) / 100
         ).toString();
@@ -77,13 +75,16 @@
       }
     }
 
-    if (userInput === "invert") {
+    if (input === "Invert") {
       let inverted = -operation.firstOperand;
       operation.firstOperand = inverted.toString();
       updateDisplay(operation.firstOperand);
     }
 
-    if (userInput === "return") {
+    if (input === "Enter") {
+      if (operation.result) {
+        updateDisplay(operation.result);
+      }
       if (
         operation.firstOperand &&
         operation.operator &&
@@ -108,7 +109,7 @@
       }
     }
 
-    if (userInput === "clear") {
+    if (input === "Backspace") {
       if (clearBtn.textContent === "AC" || operation.result) {
         removeOperatorStyling();
         clear();
@@ -132,35 +133,35 @@
     }
 
     // if we want to continue using result
-    if (operation.result && operators.includes(userInput)) {
+    if (operation.result && operators.includes(input)) {
       operation.firstOperand = operation.result;
       operation.result = "";
       clearBtn.textContent = "C";
-      operation.operator = userInput;
+      operation.operator = input;
     }
 
     // if input is operator
-    if (operators.includes(userInput)) {
+    if (operators.includes(input)) {
       clearBtn.textContent = "C";
-      operation.operator = userInput;
-      e.target.classList.add("active");
+      operation.operator = input;
+      e.classList.add("active");
     }
 
     // if input is firstOperand
-    if (!operation.operator && operands.includes(userInput)) {
+    if (!operation.operator && operands.includes(input)) {
       // prevent multiple zeros before dot
       if (
         (operation.firstOperand[0] === "0" &&
           operation.firstOperand[1] !== "." &&
-          userInput === "0") ||
-        isDoubleDot(operation.firstOperand, userInput)
+          input === "0") ||
+        isDoubleDot(operation.firstOperand, input)
       ) {
         return;
       }
 
       // if input is zero and another digit is clicked - overwrite it
-      if (operation.firstOperand === "0" && userInput !== ".") {
-        operation.firstOperand = userInput;
+      if (operation.firstOperand === "0" && input !== ".") {
+        operation.firstOperand = input;
         updateDisplay(operation.firstOperand);
         return;
       }
@@ -168,21 +169,32 @@
       // clear result if present
       operation.result = "";
       // default for regular input
-      operation.firstOperand += userInput;
+      operation.firstOperand += input;
       clearBtn.textContent = "C";
       updateDisplay(operation.firstOperand);
     }
 
     // if input is secondOperand
     if (
-      operands.includes(userInput) &&
+      operands.includes(input) &&
       operation.firstOperand &&
       operation.operator
     ) {
-      if (isDoubleDot(operation.secondOperand, userInput)) return;
-      operation.secondOperand += userInput;
+      if (isDoubleDot(operation.secondOperand, input)) return;
+      operation.secondOperand += input;
       clearBtn.textContent = "C";
       updateDisplay(operation.secondOperand);
     }
+  };
+
+  buttonsGroup.addEventListener("click", (e) => init(e.target));
+  document.addEventListener("keydown", (e) => {
+    let key;
+    if (e.ctrlKey && e.key === "-") {
+      key = buttonsGroup.querySelector('button[data-input="Invert"]');
+    } else {
+      key = buttonsGroup.querySelector(`button[data-input="${e.key}"]`);
+    }
+    if (key) init(key);
   });
 })();
