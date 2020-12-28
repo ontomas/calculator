@@ -51,10 +51,10 @@ button {
 .display {
   padding: 8px 12px;
   font-size: 48px;
-}
-
-.display {
   text-align: right;
+  min-height: 71px;
+  opacity: 1;
+  transition: opacity 0.25s ease-in-out;
 }
 
 .buttons {
@@ -62,11 +62,16 @@ button {
   grid-template-columns: repeat(4, 1fr);
   text-align: center;
   gap: 1px;
-  font-size: 32px;
+  font-size: 26px;
 }
 
 .buttons button {
   padding: 8px;
+}
+
+.buttons .active {
+  padding: 7px;
+  border: 1px solid #ccc;
 }
 
 .buttons button:active {
