@@ -192,7 +192,6 @@
       clearBtn.textContent = "C";
       updateDisplay(operation.secondOperand);
     }
-    console.table(operation);
   };
 
   buttonsGroup.addEventListener("click", (e) => init(e.target));
