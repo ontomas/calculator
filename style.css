@@ -84,6 +84,6 @@ button {
   border-radius: 0 0 0 10px;
 }
 
-.buttons button[data-input="Return"] {
+.buttons button[data-input="Enter"] {
   border-radius: 0 0 10px 0;
 }
